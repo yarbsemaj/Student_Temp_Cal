@@ -1,0 +1,128 @@
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <link href="css\accountDetails.css" rel="stylesheet" type="text/css">
+  </head><body ng-app="myApp" ng-controller="myCtrl">
+    <div class="navbar navbar-default navbar-static-top"><div class="container"><div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
+            <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
+            <span class="icon-bar"></span></button><a class="navbar-brand" href="#"><span>ST Calender</span></a></div>
+        <div class="collapse navbar-collapse" id="navbar-ex-collapse"><ul class="nav navbar-nav navbar-right"><li>
+            <a href="logout.php">{{Username}}</a></li></ul></div></div></div><div class="section">
+      
+      <div class="background-image-fixed cover-image"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h2 class="text-center">Click to add a Student Temp account</h2>
+          </div>
+        </div>
+        <div class="row" id="accountList">
+          <div class="col-md-4 hidden-sm hidden-xs text-center">
+            <img src="{{Profile_Image}}&quot;" class="img-circle img-responsive"><p class="lead text-center">{{Email}}</p>
+          </div>
+          <div class="col-md-4 hidden-sm hidden-xs text-center">
+            <img src="img\pluss.png" class="img-responsive">
+          </div>
+          <div class="col-md-4 text-center">
+            <img src="img\st_logo.png" class="img-circle img-responsive center-block"><p class="lead text-center">Not Linked</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="section section-primary">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <p contenteditable="true">© James Bray 2017</p>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+            </div><p contenteditable="true">This is an unofficial Tool, not endorsed by &nbsp;Dashboard Technology&nbsp;LIMITED</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <div class="modal fade" id="studentTempLogin">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Add Student Temp Account</h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" id="studentTempLoginForm" role="form">
+              <div class="form-group">
+                <div class="col-sm-2">
+                  <label for="inputEmail" class="control-label">Email</label>
+                </div>
+                <div class="col-sm-10">
+                  <input type="email" class="form-control" id="inputEmail" name="email" placeholder="Email">
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-2">
+                  <label for="inputPassword" class="control-label">Password</label>
+                </div>
+                <div class="col-sm-10">
+                  <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password">
+                </div>
+                  <div class="col-sm-10">
+                      <p>By clicking add you are agreeing to <a href="policies.html">our privacy policy.</a></p>
+                  </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal">Close</a>
+            <a class="btn btn-success" id="add">Add</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function($scope, $http) {
+        $http.get("controler/accountInfo.php")
+            .then(function(response) {
+                $scope.Profile_Image = response.data.picture;
+                $scope.Email = response.data.email;
+                $scope.Username = response.data.name;
+            });
+    });
+
+    $(document).ready(
+        function () {
+            $("#accountList").click(function () {
+                $('#studentTempLogin').modal('show');
+            });
+
+            $("#add").click(function () {
+                $('#add').html('<i class="fa fa-fw fa-gear fa-lg fa-spin"></i>');
+                $.ajax({
+                    type: "POST",
+                    url: "controler/addStudentTemp.php",
+                    data: $('#studentTempLoginForm').serialize(),
+
+                    success: function(data){
+                        $('#add').html('Add');
+                        if(data.Success){
+                            location.reload();
+                        }else{
+                            alert("Your username or password is invalid");
+                        }
+                    }
+                });
+            });
+        }
+    )
+</script>
+
+</body></html>

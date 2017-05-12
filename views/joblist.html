@@ -1,0 +1,103 @@
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="http://pingendo.github.io/pingendo-bootstrap/themes/default/bootstrap.css" rel="stylesheet" type="text/css">
+  </head><body ng-app="jobListPage">
+    <div class="navbar navbar-default navbar-static-top" ng-controller="navBar">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#"><span>ST Calender</span></a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-ex-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="logout.php">{{Username}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h1 contenteditable="true">Welcome back {{Username}}</h1>
+            <h2>Your upcoming jobs...</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-striped" ng-controller="main">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Date</th>
+                  <th>Dress Code</th>
+                  <th>Location</th>
+                  <th>Supervisor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="x in jobList">
+                  <td>{{x.ShortDesc}}</td>
+                  <td>{{x.StartTime}} - {{x.EndTime}}&nbsp;{{x.StartDate}}</td>
+                  <td>{{x.DressCode}}</td>
+                  <td>{{x.Building}}</td>
+                  <td>{{x.Supervisor}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <p class="text-muted">Please note: It can take up to an hour for new jobs to appear on your
+              Google calendar</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="section section-primary">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <p contenteditable="true">© James Bray 2017</p>
+          </div>
+          <div class="col-sm-6">
+            <p contenteditable="true">This is an unofficial Tool, not endorsed by &nbsp;Dashboard Technology&nbsp;LIMITED</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script>
+      var app = angular.module('jobListPage', []);
+      app.controller('main', function($scope, $http) {
+        $http.get("controler/jobList.php").then(function (response) {
+            $scope.jobList = response.data;
+        });
+      });
+      
+       app.controller('navBar', function($scope, $http) {
+        $http.get("controler/accountInfo.php")
+            .then(function(response) {
+                $scope.Username = response.data.name;
+            });
+    });
+    </script>
+  
+
+</body></html>
