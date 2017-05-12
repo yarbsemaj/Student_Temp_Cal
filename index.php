@@ -16,5 +16,5 @@ if(isset($_SESSION['Token'])){
 
     $studentTemp = new StudentTempModal();
 
-    if($studentTemp->isLinked($googleData->id)) require_once ('views/account.html'); else require_once ('views/account.html');
+    if($studentTemp->isLinked($googleData->id)) require_once ('views/joblist.html'); else require_once ('views/account.html');
 }else require_once ('views/login.html');
