@@ -18,7 +18,7 @@ class Event
 
         $event = new Google_Service_Calendar_Event(array(
             'summary' => $job['ShortDesc'],
-            'location' => $job['Building'],
+            'location' => $job['Building'].", ".$job['Address'],
             'description' => "Dress Code:- ".$job['DressCode']."\nSupervisor:- ".$job['Supervisor']."\n".$job['Info'],
             'start' => array(
                 'dateTime' => $statTime,

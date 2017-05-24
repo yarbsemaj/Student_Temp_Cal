@@ -11,23 +11,55 @@ require_once (__DIR__."/../controler/Event.php");
 class StudentTempConnection
 {
     public $cookies = array();
-    private $getHeaders;
     private $valid = false;
 
     public function __construct($username,$password)
     {
-        $url = 'https://www.studenttemp.co.uk/user_sessions';
-        $data = array('user_session[email]' => $username, 'user_session[password]' => $password);
+        $url = 'https://www.studenttemp.co.uk/login';
+        $options = array(
+            'http' => array(
+                'method'  => 'GET'
+            )
+        );
+        $context  = stream_context_create($options);
+        $result = file_get_contents($url, false, $context);
+
+        $doc = new DomDocument;
+        $doc->validateOnParse = true;
+        @$doc->loadHTML($result);
+
+        $xp = new DOMXpath($doc);
+        $inputs = $xp->query('//input[@name="authenticity_token"]');
+        $input = $inputs->item(0);
+
+        $at = $input->getAttribute('value');
+
+        foreach ($http_response_header as $hdr) {
+            if (preg_match('/^Set-Cookie:\s*([^;]+)/', $hdr, $matches)) {
+                parse_str($matches[1], $tmp);
+                $this->cookies += $tmp;
+            }
+        }
+
+        $data = array('user_session[email]' => $username,
+            'user_session[password]' => $password,
+            'authenticity_token' => $at);
 
         $options = array(
             'http' => array(
-                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                'header' => "Content-type: application/x-www-form-urlencoded\r\n"
+                    . $this->getCookies()."\r\n"
+            ,
                 'method' => 'POST',
                 'content' => http_build_query($data)
             )
         );
+
+        $url = 'https://www.studenttemp.co.uk/user_sessions';
+
         $context = stream_context_create($options);
         file_get_contents($url, false, $context);
+
 
         foreach ($http_response_header as $hdr) {
             if (preg_match('/^Set-Cookie:\s*([^;]+)/', $hdr, $matches)) {
@@ -37,7 +69,6 @@ class StudentTempConnection
         }
         if(count($this->cookies) ==2){
             $this->valid=true;
-            $this->getHeaders ="Cookie:_786_dt_=".$this->cookies['_786_dt_']."; _dt_=".$this->cookies['_dt_'];
         }
     }
 
@@ -49,7 +80,7 @@ class StudentTempConnection
         $url = 'https://www.studenttemp.co.uk/bookings#upcoming';
         $options = array(
             'http' => array(
-                'header'  => $this->getHeaders,
+                'header'  => $this->getCookies(),
                 'method'  => 'GET'
             )
         );
@@ -89,7 +120,7 @@ class StudentTempConnection
 
         $options = array(
             'http' => array(
-                'header'  => $this->getHeaders,
+                'header'  => $this->getCookies(),
                 'method'  => 'GET'
             )
         );
@@ -113,6 +144,15 @@ class StudentTempConnection
         }
         return $return;
 
+    }
+
+    function getCookies(){
+        $string = "Cookie: ";
+        foreach ($this->cookies as $index => $cookie)
+        {
+            $string= $string.$index."=".$cookie.";";
+        }
+        return substr($string,0,-1);
     }
 
     function addJobs($user,$googleInfo){
