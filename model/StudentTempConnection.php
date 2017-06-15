@@ -18,6 +18,7 @@ class StudentTempConnection
         $url = 'https://www.studenttemp.co.uk/login';
         $options = array(
             'http' => array(
+                'header'  => $this->getCookies()."\r\nUser-Agent: Hi, its james, pls dont block me\r\n",
                 'method'  => 'GET'
             )
         );
@@ -51,7 +52,7 @@ class StudentTempConnection
         $options = array(
             'http' => array(
                 'header' => "Content-type: application/x-www-form-urlencoded\r\n"
-                    . $this->getCookies()."\r\n"
+                    . $this->getCookies()."\r\nUser-Agent: Hi, its james, pls dont block me\r\n"
             ,
                 'method' => 'POST',
                 'content' => http_build_query($data)
@@ -83,8 +84,9 @@ class StudentTempConnection
         $url = 'https://www.studenttemp.co.uk/bookings#upcoming';
         $options = array(
             'http' => array(
-                'header'  => $this->getCookies(),
+                'header'  => $this->getCookies()."\r\nUser-Agent: Hi, its james, pls dont block me\r\n",
                 'method'  => 'GET'
+
             )
         );
         $context  = stream_context_create($options);
@@ -123,8 +125,8 @@ class StudentTempConnection
 
         $options = array(
             'http' => array(
-                'header'  => $this->getCookies(),
-                'method'  => 'GET'
+                'header'  => $this->getCookies()."\r\nUser-Agent: Hi, its james, pls dont block me\r\n",
+                'method'  => 'GET',
             )
         );
         $context  = stream_context_create($options);
